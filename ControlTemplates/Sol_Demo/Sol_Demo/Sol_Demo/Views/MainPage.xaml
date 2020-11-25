@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Sol_Demo.ViewModels"
+             xmlns:component="clr-namespace:Sol_Demo.Components"
+             Title="Main Page"
+             x:Class="Sol_Demo.Views.MainPage">
+
+    <ContentPage.BindingContext>
+        <vm:PersonViewModel></vm:PersonViewModel>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+
+        <ControlTemplate x:Key="PersonControlTemplate">
+            <Frame BindingContext="{Binding Source={RelativeSource TemplatedParent}}"
+                   BackgroundColor="{TemplateBinding CardColor}"
+                   BorderColor="{TemplateBinding BorderColor}"
+                   CornerRadius="5"
+                   HasShadow="True"
+                   Padding="8"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="75" />
+                        <RowDefinition Height="4" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label Text="{TemplateBinding CardName}"
+                           FontAttributes="Bold"
+                           FontSize="Large"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Start" />
+                    <BoxView Grid.Row="1"
+                             BackgroundColor="{TemplateBinding BorderColor}"
+                             HeightRequest="2"
+                             HorizontalOptions="Fill" />
+                    <Label Grid.Row="2"
+                           Text="{TemplateBinding CardDescription}"
+                           VerticalTextAlignment="Start"
+                           VerticalOptions="Fill"
+                           HorizontalOptions="Fill" />
+                    <Button Text="Delete"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PersonViewModel}}, Path=DeleteCommand}"
+                            CommandParameter="{Binding CardName}"
+                            HorizontalOptions="End" />
+                </Grid>
+            </Frame>
+        </ControlTemplate>
+
+        <DataTemplate x:Key="PersonTemplate">
+            <component:CardViewComponent
+                BorderColor="DarkGray"
+                CardColor="Orange"
+                CardName="{Binding Name, Mode=TwoWay}"
+                CardDescription="{Binding Description, Mode=TwoWay}"
+                CardDeleteCommand="{Binding Source={x:RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type vm:PersonViewModel}}, Path=DeleteCommand}"
+                ControlTemplate="{x:StaticResource PersonControlTemplate}">
+            </component:CardViewComponent>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <StackLayout>
+        <CollectionView
+            ItemsSource="{Binding PersonList, Mode=TwoWay}"
+            ItemTemplate="{Binding Source={x:StaticResource Key=PersonTemplate}}">
+        </CollectionView>
+    </StackLayout>
+</ContentPage>
